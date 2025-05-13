@@ -3,77 +3,53 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tin tức CNTT</title>
+  <title>Báo Công nghệ</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f2f2f2;
-      padding: 20px;
-    }
-
-    h1 {
-      text-align: center;
-    }
-
-    .feed {
-      max-width: 800px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-    }
-
-    .item {
-      border-bottom: 1px solid #ddd;
-      padding: 10px 0;
-    }
-
-    .item h2 {
-      margin: 0;
-      font-size: 18px;
-      color: #0077cc;
-    }
-
-    .item p {
-      margin: 5px 0;
-      color: #333;
-    }
-
-    .item small {
-      color: #888;
-    }
+    body { font-family: Arial, sans-serif; background: #f9f9f9; margin: 0; padding: 20px; }
+    h1 { text-align: center; }
+    .news-item { background: #fff; padding: 15px; margin: 10px auto; border-radius: 8px; max-width: 800px; box-shadow: 0 0 5px #ccc; cursor: pointer; }
+    .news-item h2 { margin: 0; font-size: 18px; color: #0077cc; }
+    .news-item small { color: #888; }
+    .content-viewer { display: none; background: #fff; padding: 20px; margin-top: 20px; border-radius: 8px; box-shadow: 0 0 10px #aaa; max-width: 800px; margin-left: auto; margin-right: auto; }
+    .close-btn { float: right; color: red; cursor: pointer; font-weight: bold; }
   </style>
 </head>
 <body>
-  <h1>Tin tức Công nghệ Thông tin</h1>
-  <div class="feed" id="feed">Đang tải tin tức...</div>
+  <h1>Tin tức Công nghệ Mới Nhất</h1>
+  <div id="news-list">Đang tải...</div>
+
+  <div id="viewer" class="content-viewer">
+    <span class="close-btn" onclick="document.getElementById('viewer').style.display='none'">[X]</span>
+    <h2 id="v-title"></h2>
+    <p><small id="v-date"></small></p>
+    <div id="v-content" style="white-space: pre-line;"></div>
+  </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyDFTx4NL__X_GKzESVCfn7JokFfuMOAhJ543MYIulXib2krv7uYKPD9GFk9i_R1BytqA/exec"; // Thay bằng link script của bạn
+    const API_URL = "https://script.google.com/macros/s/AKfycbyDFTx4NL__X_GKzESVCfn7JokFfuMOAhJ543MYIulXib2krv7uYKPD9GFk9i_R1BytqA/exec"; // Thay bằng link thật
 
     async function loadNews() {
-      const container = document.getElementById("feed");
-      container.innerHTML = "Đang tải...";
+      const res = await fetch(API_URL);
+      const data = await res.json();
+      const list = document.getElementById("news-list");
+      list.innerHTML = "";
 
-      try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
-        container.innerHTML = "";
-
-        data.slice(0, 20).forEach(item => {
-          const div = document.createElement("div");
-          div.className = "item";
-          div.innerHTML = `
-            <h2><a href="${item.link}" target="_blank">${item.title}</a></h2>
-            <p><small>${new Date(item.pubDate).toLocaleString("vi-VN")}</small></p>
-            <p>${item.description.slice(0, 150)}...</p>
-          `;
-          container.appendChild(div);
-        });
-      } catch (error) {
-        container.innerHTML = "Không thể tải tin tức.";
-      }
+      data.forEach((item, i) => {
+        const div = document.createElement("div");
+        div.className = "news-item";
+        div.innerHTML = `
+          <h2>${item.title}</h2>
+          <small>${new Date(item.pubDate).toLocaleString("vi-VN")}</small>
+        `;
+        div.onclick = () => {
+          document.getElementById("v-title").innerText = item.title;
+          document.getElementById("v-date").innerText = new Date(item.pubDate).toLocaleString("vi-VN");
+          document.getElementById("v-content").innerText = item.content;
+          document.getElementById("viewer").style.display = "block";
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+        list.appendChild(div);
+      });
     }
 
     loadNews();
