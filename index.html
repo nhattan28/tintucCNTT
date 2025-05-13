@@ -3,53 +3,147 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Báo Công nghệ</title>
+  <title>Báo Công nghệ IT</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; background: #f9f9f9; margin: 0; padding: 20px; }
-    h1 { text-align: center; }
-    .news-item { background: #fff; padding: 15px; margin: 10px auto; border-radius: 8px; max-width: 800px; box-shadow: 0 0 5px #ccc; cursor: pointer; }
-    .news-item h2 { margin: 0; font-size: 18px; color: #0077cc; }
-    .news-item small { color: #888; }
-    .content-viewer { display: none; background: #fff; padding: 20px; margin-top: 20px; border-radius: 8px; box-shadow: 0 0 10px #aaa; max-width: 800px; margin-left: auto; margin-right: auto; }
-    .close-btn { float: right; color: red; cursor: pointer; font-weight: bold; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #0f2027; /* fallback for old browsers */
+      background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+      min-height: 100vh;
+      color: #f1f1f1;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 2.5rem;
+      color: #00e6e6;
+    }
+    .news-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 15px;
+      margin: 10px auto;
+      border-radius: 10px;
+      max-width: 900px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .news-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-2px);
+    }
+    .news-item h2 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: #00ffe1;
+    }
+    .news-item small {
+      color: #ccc;
+    }
+    .content-viewer {
+      display: none;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 25px;
+      margin: 20px auto;
+      border-radius: 10px;
+      max-width: 900px;
+    }
+    .close-btn {
+      float: right;
+      color: #ff6666;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+    #v-title {
+      color: #00ffe1;
+    }
+    #v-content {
+      white-space: pre-line;
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+      .news-item h2 {
+        font-size: 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+      .news-item h2 {
+        font-size: 0.95rem;
+      }
+      .content-viewer {
+        padding: 15px;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>Tin tức Công nghệ Mới Nhất</h1>
-  <div id="news-list">Đang tải...</div>
+  <h1 id="main-title">🧠 Tin tức Công nghệ Thông tin</h1>
+
+  <div id="news-list">Đang tải dữ liệu...</div>
 
   <div id="viewer" class="content-viewer">
-    <span class="close-btn" onclick="document.getElementById('viewer').style.display='none'">[X]</span>
+    <span class="close-btn" onclick="hideArticle()">[Đóng]</span>
     <h2 id="v-title"></h2>
     <p><small id="v-date"></small></p>
-    <div id="v-content" style="white-space: pre-line;"></div>
+    <div id="v-content"></div>
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyDFTx4NL__X_GKzESVCfn7JokFfuMOAhJ543MYIulXib2krv7uYKPD9GFk9i_R1BytqA/exec"; // Thay bằng link thật
+    const API_URL = "https://script.google.com/macros/s/AKfycbyDFTx4NL__X_GKzESVCfn7JokFfuMOAhJ543MYIulXib2krv7uYKPD9GFk9i_R1BytqA/exec";
 
     async function loadNews() {
-      const res = await fetch(API_URL);
-      const data = await res.json();
-      const list = document.getElementById("news-list");
-      list.innerHTML = "";
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        const list = document.getElementById("news-list");
+        list.innerHTML = "";
 
-      data.forEach((item, i) => {
-        const div = document.createElement("div");
-        div.className = "news-item";
-        div.innerHTML = `
-          <h2>${item.title}</h2>
-          <small>${new Date(item.pubDate).toLocaleString("vi-VN")}</small>
-        `;
-        div.onclick = () => {
-          document.getElementById("v-title").innerText = item.title;
-          document.getElementById("v-date").innerText = new Date(item.pubDate).toLocaleString("vi-VN");
-          document.getElementById("v-content").innerText = item.content;
-          document.getElementById("viewer").style.display = "block";
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
-        list.appendChild(div);
-      });
+        data.forEach((item) => {
+          const div = document.createElement("div");
+          div.className = "news-item";
+          div.innerHTML = `
+            <h2>${item.title}</h2>
+            <small>${new Date(item.pubDate).toLocaleString("vi-VN")}</small>
+          `;
+          div.onclick = () => showArticle(item);
+          list.appendChild(div);
+        });
+      } catch (e) {
+        document.getElementById("news-list").innerHTML = "❌ Lỗi tải tin tức. Kiểm tra kết nối.";
+      }
+    }
+
+    function showArticle(item) {
+      document.getElementById("news-list").style.display = "none";
+      document.getElementById("main-title").style.display = "none";
+      document.getElementById("v-title").innerText = item.title;
+      document.getElementById("v-date").innerText = new Date(item.pubDate).toLocaleString("vi-VN");
+      document.getElementById("v-content").innerText = item.content;
+      document.getElementById("viewer").style.display = "block";
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideArticle() {
+      document.getElementById("viewer").style.display = "none";
+      document.getElementById("news-list").style.display = "block";
+      document.getElementById("main-title").style.display = "block";
     }
 
     loadNews();
