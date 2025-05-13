@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tin tức CNTT</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f2f2f2;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .feed {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    .item {
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+    }
+
+    .item h2 {
+      margin: 0;
+      font-size: 18px;
+      color: #0077cc;
+    }
+
+    .item p {
+      margin: 5px 0;
+      color: #333;
+    }
+
+    .item small {
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <h1>Tin tức Công nghệ Thông tin</h1>
+  <div class="feed" id="feed">Đang tải tin tức...</div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbyDFTx4NL__X_GKzESVCfn7JokFfuMOAhJ543MYIulXib2krv7uYKPD9GFk9i_R1BytqA/exec"; // Thay bằng link script của bạn
+
+    async function loadNews() {
+      const container = document.getElementById("feed");
+      container.innerHTML = "Đang tải...";
+
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        container.innerHTML = "";
+
+        data.slice(0, 20).forEach(item => {
+          const div = document.createElement("div");
+          div.className = "item";
+          div.innerHTML = `
+            <h2><a href="${item.link}" target="_blank">${item.title}</a></h2>
+            <p><small>${new Date(item.pubDate).toLocaleString("vi-VN")}</small></p>
+            <p>${item.description.slice(0, 150)}...</p>
+          `;
+          container.appendChild(div);
+        });
+      } catch (error) {
+        container.innerHTML = "Không thể tải tin tức.";
+      }
+    }
+
+    loadNews();
+  </script>
+</body>
+</html>
